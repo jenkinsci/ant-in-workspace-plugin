@@ -24,7 +24,9 @@ import net.sf.json.JSONObject;
 
 /**
  * 
- * PC/E Jenkins Plugin to provide the ANT from the current Workspace.
+ * Jenkins plugin to provide the Ant from the current Workspace. <br/>
+ * This is to support projects, that must use a specific version of Ant that is checked-in with the source code. With
+ * this plugin you can use the checked-in Ant for building the current project.
  *
  * @author stephan.watermeyer, Diebold Nixdorf
  */
@@ -46,17 +48,18 @@ public class AntInWorkspace extends Ant {
 	}
 
 	/**
-	 * Return the ANT from super or if not defined the ANT from the workspace.
+	 * Return the Ant from super or if not defined the Ant from the workspace.
 	 */
 	public AntInstallation getAnt() {
 		AntInstallation retVal = super.getAnt();
 		if (retVal != null) {
-			LOGGER.log(Level.INFO, "use ANT from super: " + retVal.getHome());
+			LOGGER.log(Level.INFO, "use Ant from super: " + retVal.getHome());
 		} else if (mWorkspace == null) {
-			LOGGER.log(Level.INFO, "Workspace is not set. Cannot use ANT from workspace.");
+			LOGGER.log(Level.INFO, "Workspace is not set. Cannot use Ant from workspace.");
 		} else {
-			LOGGER.log(Level.INFO, "use ANT from workspace");
-			retVal = new AntInstallation("Workspace ANT", mWorkspace + getDescriptor().getAntWorkspaceFolder(), null);
+			LOGGER.log(Level.INFO, "use Ant from workspace");
+			retVal = new AntInstallation("Ant In Workspace", mWorkspace + getDescriptor().getAntWorkspaceFolder(),
+					null);
 		}
 		return retVal;
 	}
@@ -64,20 +67,26 @@ public class AntInWorkspace extends Ant {
 	@Override
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
 			throws InterruptedException, IOException {
-		LOGGER.log(Level.FINE, "perform: " + build.getWorkspace().getRemote());
 
 		// Important to store this into member variable first!
 		mWorkspace = build.getWorkspace().getRemote();
+		mWorkspace = appendSlashIfNecessary(mWorkspace);
 
 		final AntInstallation ant = getAnt();
 		if (ant != null && launcher.isUnix()) {
-			makeAntExecutable(ant);
+			validateAndmakeAntExecutable(ant);
 		}
 		return super.perform(build, launcher, listener);
 	}
 
-	void makeAntExecutable(final AntInstallation pAnt) throws AbortException {
-		final Path pathToAntBinary = new File(pAnt.getHome() + "/bin/ant").toPath();
+	void validateAndmakeAntExecutable(final AntInstallation pAnt) throws AbortException {
+		final File file = new File(pAnt.getHome() + "/bin/ant");
+		if (!file.exists()) {
+			throw new AbortException("Ant does not exist in Workspace: " + file.getAbsolutePath());
+		}
+
+		final Path pathToAntBinary = file.toPath();
+
 		try {
 			LOGGER.log(Level.FINE, "Change File Permissions: " + pathToAntBinary.toString());
 			final Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
@@ -86,22 +95,22 @@ public class AntInWorkspace extends Ant {
 			perms.add(PosixFilePermission.OWNER_EXECUTE);
 			Files.setPosixFilePermissions(pathToAntBinary, perms);
 		} catch (IOException e) {
-			throw new AbortException("Unable to make ANT executable " + pathToAntBinary.toString());
+			throw new AbortException("Unable to make Ant executable: " + pathToAntBinary.toString());
 		}
 	}
 
 	@Extension
-	@Symbol("antpce")
+	@Symbol("antws")
 	public static class DescriptorImpl extends Ant.DescriptorImpl {
 
 		private String antWorkspaceFolder;
 
 		public String getDisplayName() {
-			return "Invoke Workspace ANT";
+			return "Invoke Ant In Workspace";
 		}
 
 		/**
-		 * No Choices should be given. We choose automatically the ANT from the Workspace.
+		 * No Choices should be given. We choose automatically the Ant from the Workspace.
 		 */
 		public AntInstallation[] getInstallations() {
 			return new AntInstallation[] {};
@@ -110,17 +119,25 @@ public class AntInWorkspace extends Ant {
 		@Override
 		public boolean configure(StaplerRequest staplerRequest, JSONObject json) throws FormException {
 			antWorkspaceFolder = json.getString("antWorkspaceFolder");
+			antWorkspaceFolder = appendSlashIfNecessary(antWorkspaceFolder);
 			save();
 			return true;
 		}
 
 		public String getAntWorkspaceFolder() {
 			if (antWorkspaceFolder == null) {
-				LOGGER.log(Level.FINE, "ANT in Workspace is not configured. Return default");
+				LOGGER.log(Level.INFO, "Ant in Workspace is not configured. Return default");
 				antWorkspaceFolder = "DailyBuild/ant-1.7.1/";
 			}
 			return antWorkspaceFolder;
 		}
 
+	}
+
+	static String appendSlashIfNecessary(String pPath) {
+		if (pPath.endsWith("/") == false) {
+			pPath += "/";
+		}
+		return pPath;
 	}
 }

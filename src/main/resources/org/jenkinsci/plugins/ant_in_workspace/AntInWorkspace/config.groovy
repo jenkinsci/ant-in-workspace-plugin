@@ -21,7 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wincornixdorf.pce.jenkins.dailybuildant.AntPCE;
+package org.jenkinsci.plugins.ant_in_workspace.AntInWorkspace;
+
 f=namespace(lib.FormTagLib)
 
 if (descriptor.installations.length != 0) {

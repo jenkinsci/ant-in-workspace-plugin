@@ -14,7 +14,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 
-	<name>Jenkins ANT from DailyBuild</name>
+	<name>Ant In Workspace</name>
 	<description>Plugin allows to use an ANT that is located in the Workspace. This is to support legacy builds for projects that rely on a (checked-in) ANT version.</description>
 	<url>https://wiki.jenkins-ci.org/display/JENKINS/Maven+Artifact+ChoiceListProvider+Plugin</url>
 
