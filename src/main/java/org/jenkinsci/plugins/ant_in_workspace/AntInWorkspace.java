@@ -88,11 +88,13 @@ public class AntInWorkspace extends Ant {
 		final Path pathToAntBinary = file.toPath();
 
 		try {
-			LOGGER.log(Level.FINE, "Change File Permissions: " + pathToAntBinary.toString());
+			LOGGER.log(Level.FINE, "Change file permissions: " + pathToAntBinary.toString());
 			final Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
 			perms.add(PosixFilePermission.OWNER_READ);
 			perms.add(PosixFilePermission.OWNER_WRITE);
 			perms.add(PosixFilePermission.OWNER_EXECUTE);
+			perms.add(PosixFilePermission.GROUP_READ);
+			perms.add(PosixFilePermission.OTHERS_READ);
 			Files.setPosixFilePermissions(pathToAntBinary, perms);
 		} catch (IOException e) {
 			throw new AbortException("Unable to make Ant executable: " + pathToAntBinary.toString());
