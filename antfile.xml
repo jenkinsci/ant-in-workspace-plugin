@@ -1,0 +1,7 @@
+<project name="pcebuild" basedir="." default="info" xmlns:artifact="antlib:org.apache.maven.artifact.ant" xmlns:pceivyresolver="antlib:com.myproclassic.resolver.ivy.ant" xmlns:ivy="antlib:org.apache.ivy.ant" >
+
+	<target name="info" description="">
+		<echo message="Hello World!" />
+	</target>
+	
+</project>
