@@ -30,7 +30,7 @@ public class AntPCE extends Ant {
 	@DataBoundConstructor
 	public AntPCE(String targets, String antName, String antOpts, String buildFile, String properties) {
 		super(targets, antName, antOpts, buildFile, properties);
-		System.out.println("constructor");
+		LOGGER.log(Level.FINE, "constructor");
 		this.antName = antName;
 	}
 
@@ -49,8 +49,8 @@ public class AntPCE extends Ant {
 		LOGGER.log(Level.FINE, "antname: " + antName);
 		AntInstallation ant = super.getAnt();
 		if (ant == null) {
-			LOGGER.log(Level.FINE, "use custom workspace ant");
-			ant = new AntInstallation("PCE_DailyBuild", "DailyBuild/ant-1.7.1/", null);
+			LOGGER.log(Level.FINE, "use custom workspace ant2");
+			ant = new AntInstallation("PCE_DailyBuild", "/var/lib/jenkins/jobs/ANT/workspace/DailyBuild/ant-1.7.1/", null);
 		} else {
 			LOGGER.log(Level.FINE, "use ant from super: " + ant.getHome());
 		}
