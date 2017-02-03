@@ -1,7 +1,0 @@
-<project name="example" basedir="." default="info" xmlns:artifact="antlib:org.apache.maven.artifact.ant" >
-
-	<target name="info" description="">
-		<echo message="Hello World!" />
-	</target>
-	
-</project>
