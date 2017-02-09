@@ -70,16 +70,16 @@ public class AntInWorkspace extends Ant {
 
 		// Important to store this into member variable first!
 		mWorkspace = build.getWorkspace().getRemote();
-		mWorkspace = appendSlashIfNecessary(mWorkspace);
+		mWorkspace = appendSeparatorIfNecessary(mWorkspace);
 
 		final AntInstallation ant = getAnt();
 		if (ant != null && launcher.isUnix()) {
-			validateAndmakeAntExecutable(ant);
+			validateAndMakeAntExecutable(ant);
 		}
 		return super.perform(build, launcher, listener);
 	}
 
-	void validateAndmakeAntExecutable(final AntInstallation pAnt) throws AbortException {
+	void validateAndMakeAntExecutable(final AntInstallation pAnt) throws AbortException {
 		final File file = new File(pAnt.getHome() + "/bin/ant");
 		if (!file.exists()) {
 			throw new AbortException("Ant does not exist in Workspace: " + file.getAbsolutePath());
@@ -121,7 +121,7 @@ public class AntInWorkspace extends Ant {
 		@Override
 		public boolean configure(StaplerRequest staplerRequest, JSONObject json) throws FormException {
 			antWorkspaceFolder = json.getString("antWorkspaceFolder");
-			antWorkspaceFolder = appendSlashIfNecessary(antWorkspaceFolder);
+			antWorkspaceFolder = appendSeparatorIfNecessary(antWorkspaceFolder);
 			save();
 			return true;
 		}
@@ -136,7 +136,7 @@ public class AntInWorkspace extends Ant {
 
 	}
 
-	static String appendSlashIfNecessary(String pPath) {
+	static String appendSeparatorIfNecessary(String pPath) {
 		if (pPath.endsWith("/") == false) {
 			pPath += "/";
 		}
