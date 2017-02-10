@@ -59,7 +59,7 @@ public class AntInWorkspace extends Ant {
 		} else if (mPathToAnt == null) {
 			LOGGER.log(Level.INFO, "Path to Ant is not set. Cannot use Ant from workspace.");
 		} else {
-			LOGGER.log(Level.INFO, "use Ant from workspace");
+			LOGGER.log(Level.INFO, "use Ant from workspace: " + mPathToAnt);
 			retVal = new AntInstallation("Ant In Workspace", mPathToAnt, null);
 		}
 		return retVal;
@@ -81,8 +81,6 @@ public class AntInWorkspace extends Ant {
 		// Important to store this into member variable
 		final String workspace = appendSeparatorIfNecessary(build.getWorkspace().getRemote());
 		mPathToAnt = workspace + antInWorkspace;
-
-		LOGGER.log(Level.INFO, "AntInWorkspace: " + mPathToAnt);
 
 		final AntInstallation ant = getAnt();
 		if (ant != null && launcher.isUnix()) {
