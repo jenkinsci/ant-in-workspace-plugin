@@ -71,7 +71,7 @@ public class AntInWorkspaceBuildWrapper extends BuildWrapper implements Serializ
 
 		@Override
 		public String getDisplayName() {
-			return "Use Ant in Workspace";
+			return "Custom Ant in Workspace";
 		}
 
 	}
