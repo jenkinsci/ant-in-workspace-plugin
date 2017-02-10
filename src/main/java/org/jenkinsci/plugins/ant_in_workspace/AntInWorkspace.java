@@ -25,8 +25,10 @@ import net.sf.json.JSONObject;
 /**
  * 
  * Jenkins plugin to provide the Ant from the current Workspace. <br/>
- * This is to support projects, that must use a specific version of Ant that is checked-in with the source code. With
- * this plugin you can use the checked-in Ant for building the current project.
+ * This is to support projects, that must use a specific version of Ant that is (checked-in with the source code and is)
+ * available in the current workspace. With this plugin you can use the checked-in Ant for building the current project.
+ * <br>
+ * The plugin allows to configure a global path for the AntInWorkspace or a per-Job configuration.
  *
  * @author stephan.watermeyer, Diebold Nixdorf
  */
@@ -35,7 +37,7 @@ public class AntInWorkspace extends Ant {
 	private static final Logger LOGGER = Logger.getLogger(AntInWorkspace.class.getName());
 
 	/** Used to store the Workspace Directory on "perform" */
-	private String mWorkspace;
+	private String mPathToAnt;
 
 	@DataBoundConstructor
 	public AntInWorkspace(String targets, String antName, String antOpts, String buildFile, String properties) {
@@ -54,12 +56,11 @@ public class AntInWorkspace extends Ant {
 		AntInstallation retVal = super.getAnt();
 		if (retVal != null) {
 			LOGGER.log(Level.INFO, "use Ant from super: " + retVal.getHome());
-		} else if (mWorkspace == null) {
-			LOGGER.log(Level.INFO, "Workspace is not set. Cannot use Ant from workspace.");
+		} else if (mPathToAnt == null) {
+			LOGGER.log(Level.INFO, "Path to Ant is not set. Cannot use Ant from workspace.");
 		} else {
 			LOGGER.log(Level.INFO, "use Ant from workspace");
-			retVal = new AntInstallation("Ant In Workspace", mWorkspace + getDescriptor().getAntWorkspaceFolder(),
-					null);
+			retVal = new AntInstallation("Ant In Workspace", mPathToAnt, null);
 		}
 		return retVal;
 	}
@@ -68,9 +69,20 @@ public class AntInWorkspace extends Ant {
 	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
 			throws InterruptedException, IOException {
 
-		// Important to store this into member variable first!
-		mWorkspace = build.getWorkspace().getRemote();
-		mWorkspace = appendSeparatorIfNecessary(mWorkspace);
+		// Evaluate if the Job has a custom AntInWorkspace directory set.
+		final String antInWorkspace;
+		if (build.getEnvironment(listener).containsKey(AntInWorkspaceBuildWrapper.ENV_VAR_CUSTOM_ANT_IN_WORKSPACE)) {
+			antInWorkspace = build.getEnvironment(listener)
+					.get(AntInWorkspaceBuildWrapper.ENV_VAR_CUSTOM_ANT_IN_WORKSPACE);
+		} else {
+			antInWorkspace = getDescriptor().getAntWorkspaceFolder();
+		}
+
+		// Important to store this into member variable
+		final String workspace = appendSeparatorIfNecessary(build.getWorkspace().getRemote());
+		mPathToAnt = workspace + antInWorkspace;
+
+		LOGGER.log(Level.INFO, "AntInWorkspace: " + mPathToAnt);
 
 		final AntInstallation ant = getAnt();
 		if (ant != null && launcher.isUnix()) {
@@ -128,8 +140,8 @@ public class AntInWorkspace extends Ant {
 
 		public String getAntWorkspaceFolder() {
 			if (antWorkspaceFolder == null) {
-				LOGGER.log(Level.INFO, "Ant in Workspace is not configured. Return default");
-				antWorkspaceFolder = "DailyBuild/ant-1.7.1/";
+				LOGGER.log(Level.INFO, "Ant in Workspace is not configured. Return default: ''");
+				antWorkspaceFolder = "";
 			}
 			return antWorkspaceFolder;
 		}
