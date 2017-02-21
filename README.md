@@ -15,7 +15,7 @@ This is to allow (legacy) builds to use a special Ant that is checked into the S
 The user documentation is available here
 * https://wiki.jenkins-ci.org/display/JENKINS/Ant+In+Workspace+Plugin
 
-# Continouos Delivery
+# Continuous Delivery
 https://jenkins.ci.cloudbees.com/job/plugins/job/ant-in-workspace-plugin/
 
 # Technical Shortcuts
