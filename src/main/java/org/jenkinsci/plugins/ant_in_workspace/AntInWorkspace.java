@@ -24,7 +24,7 @@ import net.sf.json.JSONObject;
 
 /**
  * 
- * Jenkins plugin to provide the Ant from the current Workspace. <br/>
+ * Jenkins plugin to provide the Ant from the current Workspace. <br>
  * This is to support projects, that must use a specific version of Ant that is (checked-in with the source code and is)
  * available in the current workspace. With this plugin you can use the checked-in Ant for building the current project.
  * <br>
