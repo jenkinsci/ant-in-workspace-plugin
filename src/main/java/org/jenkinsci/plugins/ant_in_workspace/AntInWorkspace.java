@@ -14,8 +14,10 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.AbortException;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
@@ -25,10 +27,12 @@ import net.sf.json.JSONObject;
 /**
  * 
  * Jenkins plugin to provide the Ant from the current Workspace. <br>
- * This is to support projects, that must use a specific version of Ant that is (checked-in with the source code and is)
- * available in the current workspace. With this plugin you can use the checked-in Ant for building the current project.
- * <br>
- * The plugin allows to configure a global path for the AntInWorkspace or a per-Job configuration.
+ * This is to support projects, that must use a specific version of Ant that is
+ * (checked-in with the source code and is) available in the current workspace.
+ * With this plugin you can use the checked-in Ant for building the current
+ * project. <br>
+ * The plugin allows to configure a global path for the AntInWorkspace or a
+ * per-Job configuration.
  *
  * @author stephan.watermeyer, Diebold Nixdorf
  */
@@ -78,8 +82,13 @@ public class AntInWorkspace extends Ant {
 			antInWorkspace = getDescriptor().getAntWorkspaceFolder();
 		}
 
+		final FilePath toCheck = build.getWorkspace();
+		if (toCheck == null) {
+			return false;
+		}
+		final String workspace = appendSeparatorIfNecessary(toCheck.getRemote());
+
 		// Important to store this into member variable
-		final String workspace = appendSeparatorIfNecessary(build.getWorkspace().getRemote());
 		mPathToAnt = workspace + antInWorkspace;
 
 		final AntInstallation ant = getAnt();
@@ -122,7 +131,8 @@ public class AntInWorkspace extends Ant {
 		}
 
 		/**
-		 * No Choices should be given. We choose automatically the Ant from the Workspace.
+		 * No Choices should be given. We choose automatically the Ant from the
+		 * Workspace.
 		 */
 		public AntInstallation[] getInstallations() {
 			return new AntInstallation[] {};
@@ -146,10 +156,18 @@ public class AntInWorkspace extends Ant {
 
 	}
 
+	/**
+	 * Checks if the given argument has and ending file separator.
+	 * 
+	 * @param pPath
+	 *            the path to check
+	 * @return the modified path
+	 */
 	static String appendSeparatorIfNecessary(String pPath) {
-		if (pPath.endsWith("/") == false) {
-			pPath += "/";
+		String retVal = pPath;
+		if (retVal != null && retVal.endsWith("/") == false) {
+			retVal += "/";
 		}
-		return pPath;
+		return retVal;
 	}
 }

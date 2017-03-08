@@ -1,5 +1,7 @@
 package org.jenkinsci.plugins.ant_in_workspace;
 
+import java.io.Serializable;
+
 import javax.annotation.CheckForNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -15,8 +17,10 @@ import jenkins.model.Jenkins;
  *
  * @author stephan.watermeyer, Diebold Nixdorf
  */
-public class AntInWorkspaceJobPropertyInfo implements Describable<AntInWorkspaceJobPropertyInfo> {
+public class AntInWorkspaceJobPropertyInfo implements Describable<AntInWorkspaceJobPropertyInfo>, Serializable {
 
+	private static final long serialVersionUID = -4107653406524142161L;
+	
 	String antInWorkspace;
 
 	@DataBoundConstructor
