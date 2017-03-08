@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>ant-in-workspace</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<packaging>hpi</packaging>
 
 	<name>Ant In Workspace</name>
@@ -51,7 +51,7 @@
 		<connection>scm:git:git@github.com:phreakadelle/ant-in-workspace-plugin.git</connection>
 		<developerConnection>scm:git:git@github.com:phreakadelle/ant-in-workspace-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-		<tag>ant-in-workspace-0.0.1</tag>
+		<tag>ant-in-workspace-0.0.2</tag>
 	</scm>
 
 	<repositories>
