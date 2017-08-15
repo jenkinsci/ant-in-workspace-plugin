@@ -2,7 +2,7 @@
 
 ## Official Documentation
 The user documentation is available here
-* https://wiki.jenkins-ci.org/display/JENKINS/Ant+In+Workspace+Plugin
+* https://plugins.jenkins.io/ant-in-workspace
 
 In this README you will find more technical information for Developers that are interested in supporting or enhancing this plugin.
 
@@ -13,7 +13,7 @@ This is to allow (legacy) builds to use a special Ant that is checked into the S
 
 ## Documentation
 The user documentation is available here
-* https://wiki.jenkins-ci.org/display/JENKINS/Ant+In+Workspace+Plugin
+* https://plugins.jenkins.io/ant-in-workspace
 
 # Continuous Delivery
 https://jenkins.ci.cloudbees.com/job/plugins/job/ant-in-workspace-plugin/
