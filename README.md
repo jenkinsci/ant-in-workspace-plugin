@@ -7,9 +7,9 @@ The user documentation is available here
 In this README you will find more technical information for Developers that are interested in supporting or enhancing this plugin.
 
 ## What does this  this?
-This Plugin extends the official Jenkins Ant Plugin. It provides a new Builder based on ANT that has disabled the functionality to choose between different Ant versions but will allow to use an Ant version that is available in the workspace.
+This Plugin extends the official Jenkins Ant Plugin. It provides a new Builder based on Ant that has disabled the functionality to choose between different Ant versions. But it will allow to use an Ant version that is available in the workspace.
 
-This is to allow (legacy) builds to use a special Ant that is checked into the SCM. When building the Job the special Ant version is returned and file-permissions (+x) are set. It is possible to configure a global AntInWorkspace parameter or a per-Job parameter.
+This is to allow (legacy) builds to use a special Ant that is checked into the SCM. When building the Job this special Ant version is returned and file-permissions (+x) are set. It is possible to configure the path to Ant in a global AntInWorkspace parameter or a per-Job parameter.
 
 ## Documentation
 The user documentation is available here
