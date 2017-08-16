@@ -16,7 +16,7 @@ The user documentation is available here
 * https://plugins.jenkins.io/ant-in-workspace
 
 # Continuous Delivery
-https://jenkins.ci.cloudbees.com/job/plugins/job/ant-in-workspace-plugin/
+https://ci.jenkins.io/job/Plugins/job/ant-in-workspace-plugin/
 
 # Technical Shortcuts
 ```
