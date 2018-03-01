@@ -98,12 +98,16 @@ public class AntInWorkspace extends Ant {
     }
 
     void validateAndMakeAntExecutable(AbstractBuild<?, ?> build, final AntInstallation pAnt) throws AbortException {
-        final FilePath pathToAntBinary;
+        final hudson.FilePath pathToAntBinary;
+        final String pathToAntInWorkspace = pAnt.getHome() + "/bin/ant";
         if (build.getWorkspace().isRemote()) {
+            LOGGER.log(Level.FINE, "searching ANT on remote node");
             final VirtualChannel channel = build.getWorkspace().getChannel();
-            pathToAntBinary = new hudson.FilePath(channel, build.getWorkspace().getRemote() + "\\" + "/bin/ant");
+            LOGGER.log(Level.FINE, channel.toString());
+            pathToAntBinary = new hudson.FilePath(channel, pathToAntInWorkspace);
         } else {
-            pathToAntBinary = new FilePath(new File(pAnt.getHome() + "/bin/ant"));
+            LOGGER.log(Level.FINE, "searching ANT on master");
+            pathToAntBinary = new hudson.FilePath(new File(pathToAntInWorkspace));
         }
 
         try {
@@ -113,9 +117,14 @@ public class AntInWorkspace extends Ant {
         
             LOGGER.log(Level.FINE, "Change file permissions: " + pathToAntBinary.getRemote());
             pathToAntBinary.chmod(0755);
+        } catch(AbortException e) {
+            // just throw
+            throw e;
         } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "failed to use ant", e);
             throw new AbortException("Unable to make Ant executable (IO Error): " + pathToAntBinary.getRemote());
         } catch (InterruptedException e) {
+            LOGGER.log(Level.WARNING, "failed to use ant2", e);
             throw new AbortException("Unable to make Ant executable (Interrupt): " + pathToAntBinary.getRemote());
         }
     }
