@@ -21,6 +21,7 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
+import hudson.remoting.VirtualChannel;
 import hudson.tasks.Ant;
 import net.sf.json.JSONObject;
 
@@ -38,136 +39,135 @@ import net.sf.json.JSONObject;
  */
 public class AntInWorkspace extends Ant {
 
-	private static final Logger LOGGER = Logger.getLogger(AntInWorkspace.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AntInWorkspace.class.getName());
 
-	/** Used to store the Workspace Directory on "perform" */
-	private String mPathToAnt;
+    /** Used to store the Workspace Directory on "perform" */
+    private String mPathToAnt;
 
-	@DataBoundConstructor
-	public AntInWorkspace(String targets, String antName, String antOpts, String buildFile, String properties) {
-		super(targets, antName, antOpts, buildFile, properties);
-	}
+    @DataBoundConstructor
+    public AntInWorkspace(String targets, String antName, String antOpts, String buildFile, String properties) {
+        super(targets, antName, antOpts, buildFile, properties);
+    }
 
-	@Override
-	public DescriptorImpl getDescriptor() {
-		return (DescriptorImpl) super.getDescriptor();
-	}
+    @Override
+    public DescriptorImpl getDescriptor() {
+        return (DescriptorImpl) super.getDescriptor();
+    }
 
-	/**
-	 * Return the Ant from super or if not defined the Ant from the workspace.
-	 */
-	public AntInstallation getAnt() {
-		AntInstallation retVal = super.getAnt();
-		if (retVal != null) {
-			LOGGER.log(Level.INFO, "use Ant from super: " + retVal.getHome());
-		} else if (mPathToAnt == null) {
-			LOGGER.log(Level.INFO, "Path to Ant is not set. Cannot use Ant from workspace.");
-		} else {
-			LOGGER.log(Level.INFO, "use Ant from workspace: " + mPathToAnt);
-			retVal = new AntInstallation("Ant In Workspace", mPathToAnt, null);
-		}
-		return retVal;
-	}
+    /**
+     * Return the Ant from super or if not defined the Ant from the workspace.
+     */
+    public AntInstallation getAnt() {
+        AntInstallation retVal = super.getAnt();
+        if (retVal != null) {
+            LOGGER.log(Level.INFO, "use Ant from super: " + retVal.getHome());
+        } else if (mPathToAnt == null) {
+            LOGGER.log(Level.INFO, "Path to Ant is not set. Cannot use Ant from workspace.");
+        } else {
+            LOGGER.log(Level.INFO, "use Ant from workspace: " + mPathToAnt);
+            retVal = new AntInstallation("Ant In Workspace", mPathToAnt, null);
+        }
+        return retVal;
+    }
 
-	@Override
-	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
-			throws InterruptedException, IOException {
+    @Override
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
 
-		// Evaluate if the Job has a custom AntInWorkspace directory set.
-		final String antInWorkspace;
-		if (build.getEnvironment(listener).containsKey(AntInWorkspaceBuildWrapper.ENV_VAR_CUSTOM_ANT_IN_WORKSPACE)) {
-			antInWorkspace = build.getEnvironment(listener)
-					.get(AntInWorkspaceBuildWrapper.ENV_VAR_CUSTOM_ANT_IN_WORKSPACE);
-		} else {
-			antInWorkspace = getDescriptor().getAntWorkspaceFolder();
-		}
+        // Evaluate if the Job has a custom AntInWorkspace directory set.
+        final String antInWorkspace;
+        if (build.getEnvironment(listener).containsKey(AntInWorkspaceBuildWrapper.ENV_VAR_CUSTOM_ANT_IN_WORKSPACE)) {
+            antInWorkspace = build.getEnvironment(listener).get(AntInWorkspaceBuildWrapper.ENV_VAR_CUSTOM_ANT_IN_WORKSPACE);
+        } else {
+            antInWorkspace = getDescriptor().getAntWorkspaceFolder();
+        }
 
-		final FilePath toCheck = build.getWorkspace();
-		if (toCheck == null) {
-			return false;
-		}
-		final String workspace = appendSeparatorIfNecessary(toCheck.getRemote());
+        final FilePath toCheck = build.getWorkspace();
+        if (toCheck == null) {
+            return false;
+        }
+        final String workspace = appendSeparatorIfNecessary(toCheck.getRemote());
 
-		// Important to store this into member variable
-		mPathToAnt = workspace + antInWorkspace;
+        // Important to store this into member variable
+        mPathToAnt = workspace + antInWorkspace;
 
-		final AntInstallation ant = getAnt();
-		if (ant != null && launcher.isUnix()) {
-			validateAndMakeAntExecutable(ant);
-		}
-		return super.perform(build, launcher, listener);
-	}
+        final AntInstallation ant = getAnt();
+        if (ant != null && launcher.isUnix()) {
+            validateAndMakeAntExecutable(build, ant);
+        }
+        return super.perform(build, launcher, listener);
+    }
 
-	void validateAndMakeAntExecutable(final AntInstallation pAnt) throws AbortException {
-		final File file = new File(pAnt.getHome() + "/bin/ant");
-		if (!file.exists()) {
-			throw new AbortException("Ant does not exist in Workspace: " + file.getAbsolutePath());
-		}
+    void validateAndMakeAntExecutable(AbstractBuild<?, ?> build, final AntInstallation pAnt) throws AbortException {
+        final FilePath pathToAntBinary;
+        if (build.getWorkspace().isRemote()) {
+            final VirtualChannel channel = build.getWorkspace().getChannel();
+            pathToAntBinary = new hudson.FilePath(channel, build.getWorkspace().getRemote() + "\\" + "/bin/ant");
+        } else {
+            pathToAntBinary = new FilePath(new File(pAnt.getHome() + "/bin/ant"));
+        }
 
-		final Path pathToAntBinary = file.toPath();
+        try {
+            if (!pathToAntBinary.exists()) {
+                throw new AbortException("Ant does not exist in Workspace: " + pathToAntBinary.getRemote());
+            }
+        
+            LOGGER.log(Level.FINE, "Change file permissions: " + pathToAntBinary.getRemote());
+            pathToAntBinary.chmod(0755);
+        } catch (IOException e) {
+            throw new AbortException("Unable to make Ant executable (IO Error): " + pathToAntBinary.getRemote());
+        } catch (InterruptedException e) {
+            throw new AbortException("Unable to make Ant executable (Interrupt): " + pathToAntBinary.getRemote());
+        }
+    }
 
-		try {
-			LOGGER.log(Level.FINE, "Change file permissions: " + pathToAntBinary.toString());
-			final Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
-			perms.add(PosixFilePermission.OWNER_READ);
-			perms.add(PosixFilePermission.OWNER_WRITE);
-			perms.add(PosixFilePermission.OWNER_EXECUTE);
-			perms.add(PosixFilePermission.GROUP_READ);
-			perms.add(PosixFilePermission.OTHERS_READ);
-			Files.setPosixFilePermissions(pathToAntBinary, perms);
-		} catch (IOException e) {
-			throw new AbortException("Unable to make Ant executable: " + pathToAntBinary.toString());
-		}
-	}
+    @Extension
+    @Symbol("antws")
+    public static class DescriptorImpl extends Ant.DescriptorImpl {
 
-	@Extension
-	@Symbol("antws")
-	public static class DescriptorImpl extends Ant.DescriptorImpl {
+        private String antWorkspaceFolder;
 
-		private String antWorkspaceFolder;
+        public String getDisplayName() {
+            return "Invoke Ant In Workspace";
+        }
 
-		public String getDisplayName() {
-			return "Invoke Ant In Workspace";
-		}
+        /**
+         * No Choices should be given. We choose automatically the Ant from the
+         * Workspace.
+         */
+        public AntInstallation[] getInstallations() {
+            return new AntInstallation[] {};
+        }
 
-		/**
-		 * No Choices should be given. We choose automatically the Ant from the
-		 * Workspace.
-		 */
-		public AntInstallation[] getInstallations() {
-			return new AntInstallation[] {};
-		}
+        @Override
+        public boolean configure(StaplerRequest staplerRequest, JSONObject json) throws FormException {
+            antWorkspaceFolder = json.getString("antWorkspaceFolder");
+            antWorkspaceFolder = appendSeparatorIfNecessary(antWorkspaceFolder);
+            save();
+            return true;
+        }
 
-		@Override
-		public boolean configure(StaplerRequest staplerRequest, JSONObject json) throws FormException {
-			antWorkspaceFolder = json.getString("antWorkspaceFolder");
-			antWorkspaceFolder = appendSeparatorIfNecessary(antWorkspaceFolder);
-			save();
-			return true;
-		}
+        public String getAntWorkspaceFolder() {
+            if (antWorkspaceFolder == null) {
+                LOGGER.log(Level.INFO, "Ant in Workspace is not configured. Return default: ''");
+                antWorkspaceFolder = "";
+            }
+            return antWorkspaceFolder;
+        }
 
-		public String getAntWorkspaceFolder() {
-			if (antWorkspaceFolder == null) {
-				LOGGER.log(Level.INFO, "Ant in Workspace is not configured. Return default: ''");
-				antWorkspaceFolder = "";
-			}
-			return antWorkspaceFolder;
-		}
+    }
 
-	}
-
-	/**
-	 * Checks if the given argument has and ending file separator.
-	 * 
-	 * @param pPath
-	 *            the path to check
-	 * @return the modified path
-	 */
-	static String appendSeparatorIfNecessary(String pPath) {
-		String retVal = pPath;
-		if (retVal != null && retVal.endsWith("/") == false) {
-			retVal += "/";
-		}
-		return retVal;
-	}
+    /**
+     * Checks if the given argument has and ending file separator.
+     * 
+     * @param pPath
+     *            the path to check
+     * @return the modified path
+     */
+    static String appendSeparatorIfNecessary(String pPath) {
+        String retVal = pPath;
+        if (retVal != null && retVal.endsWith("/") == false) {
+            retVal += "/";
+        }
+        return retVal;
+    }
 }

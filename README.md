@@ -21,7 +21,7 @@ https://ci.jenkins.io/job/Plugins/job/ant-in-workspace-plugin/
 # Technical Shortcuts
 ```
 curl -kv --no-proxy 192.168.56.101:8080 http://192.168.56.101:8080/pluginManager/uploadPlugin -u admin:admin -F file=@target/ant-in-workspace.hpi
-curl -kv --no-proxy 192.168.56.101:8080 http://192.168.56.101:8080/safeRestart -u admin:admin -F Submit=Yes -X POST
+curl -kv --no-proxy 192.168.56.102:8080 http://192.168.56.102:8080/safeRestart  -F Submit=Yes -X POST
 ```
 ## Authors
 Stephan Watermeyer
