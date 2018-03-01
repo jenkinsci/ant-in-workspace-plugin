@@ -93,10 +93,10 @@ public class AntInWorkspace extends Ant {
         return super.perform(build, launcher, listener);
     }
 
-    void validateAndMakeAntExecutable(@Nonnull final FilePath pWorkspace, @Nonnull final AntInstallation pAnt) throws AbortException {
+    void validateAndMakeAntExecutable(final FilePath pWorkspace, @Nonnull final AntInstallation pAnt) throws AbortException {
         final hudson.FilePath pathToAntBinary;
         final String pathToAntInWorkspace = pAnt.getHome() + "/bin/ant";
-        if (pWorkspace.isRemote()) {
+        if ( pWorkspace != null && pWorkspace.isRemote()) {
             LOGGER.log(Level.FINE, "searching ANT on remote node");
             final VirtualChannel channel = pWorkspace.getChannel();
             pathToAntBinary = new hudson.FilePath(channel, pathToAntInWorkspace);
