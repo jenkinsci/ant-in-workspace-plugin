@@ -103,7 +103,6 @@ public class AntInWorkspace extends Ant {
         if (build.getWorkspace().isRemote()) {
             LOGGER.log(Level.FINE, "searching ANT on remote node");
             final VirtualChannel channel = build.getWorkspace().getChannel();
-            LOGGER.log(Level.FINE, channel.toString());
             pathToAntBinary = new hudson.FilePath(channel, pathToAntInWorkspace);
         } else {
             LOGGER.log(Level.FINE, "searching ANT on master");
