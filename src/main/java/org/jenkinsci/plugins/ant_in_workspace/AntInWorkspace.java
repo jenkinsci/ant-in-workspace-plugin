@@ -2,19 +2,15 @@ package org.jenkinsci.plugins.ant_in_workspace;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.PosixFilePermission;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.annotation.Nonnull;
 
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
@@ -97,7 +93,7 @@ public class AntInWorkspace extends Ant {
         return super.perform(build, launcher, listener);
     }
 
-    void validateAndMakeAntExecutable(AbstractBuild<?, ?> build, final AntInstallation pAnt) throws AbortException {
+    void validateAndMakeAntExecutable(@Nonnull AbstractBuild<?, ?> build, @Nonnull final AntInstallation pAnt) throws AbortException {
         final hudson.FilePath pathToAntBinary;
         final String pathToAntInWorkspace = pAnt.getHome() + "/bin/ant";
         if (build.getWorkspace().isRemote()) {
