@@ -2,21 +2,21 @@
 
 Allows users to configure an ANT based build that utilizes an Ant that is located in the workspace.
 
-#What is this?
+# What is this?
 This Plugin extends the official Jenkins Ant Plugin. It provides a new Builder based on Ant that has disabled the functionality to choose between different Ant versions. But it will allow to use an Ant version that is available in the workspace.
 
 This is to allow (legacy) builds to use a special Ant that is checked into the SCM. When building the Job this special Ant version is returned and file-permissions (+x) are set. It is possible to configure the path to Ant in a global AntInWorkspace parameter or a per-Job parameter.
 
-#Example
+# Example
 We are using this because we are using a special/patched Ant version for building our software. This Ant is checked-in into the SCM and so we have to check it out, make it executable (on Unix) and use it to build the software. As our software is used in multiple customer projects, there is an option to define the path to the Ant installation on a per-Job level or globally in Jenkins.
 
-#Configuration Example
-##Project Configuration - Path per Job
+# Configuration Example
+## Project Configuration - Path per Job
 
-##Project Configuration - Ant Plugin vs. Ant-In-Workspace Plugin
+## Project Configuration - Ant Plugin vs. Ant-In-Workspace Plugin
 Default Ant-Plugin lets you choose between various Ant versions. Ant-In-Workspace Plugin will choose either the globally configured Ant or the project wise configured one.
 
-#Global Configuration
+# Global Configuration
 Configuring the global Path.
 
 
