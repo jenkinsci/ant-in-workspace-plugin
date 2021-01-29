@@ -12,13 +12,16 @@ We are using this because we are using a special/patched Ant version for buildin
 
 # Configuration Example
 ## Project Configuration - Path per Job
+![Alt text](/src/site/resources/project_config_2.png?raw=true "Example Project Configuration")
 
 ## Project Configuration - Ant Plugin vs. Ant-In-Workspace Plugin
 Default Ant-Plugin lets you choose between various Ant versions. Ant-In-Workspace Plugin will choose either the globally configured Ant or the project wise configured one.
+![Alt text](/src/site/resources/project_config_1.png?raw=true "Example Project Configuration")
 
 # Global Configuration
 Configuring the global Path.
 
+![Alt text](/src/site/resources/global_config.png?raw=true "Example Project Configuration")
 
 # Continuous Delivery
 https://ci.jenkins.io/job/Plugins/job/ant-in-workspace-plugin/
