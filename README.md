@@ -1,4 +1,8 @@
 # Jenkins Plugin - Ant In Workspace
+[![Build Status](https://ci.jenkins.io/job/Plugins/job/ant-in-workspace-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/ant-in-workspace-plugin/job/master)
+[![Contributors](https://img.shields.io/github/contributors/jenkinsci/ant-in-workspace-plugin.svg)](https://github.com/jenkinsci/ant-in-workspace-plugin/graphs/contributors)
+[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/ant-in-workspace.svg)](https://plugins.jenkins.io/ant-in-workspace-plugin)
+[![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/ant-in-workspace.svg?color=blue)](https://plugins.jenkins.io/ant-in-workspace-plugin)
 
 Allows users to configure an ANT based build that utilizes an Ant that is located in the workspace.
 
