@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>3.57</version>
+        <version>4.88</version>
         <relativePath />
     </parent>
 
@@ -27,29 +27,38 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jenkins.version>1.609.3</jenkins.version>
-        <java.level>8</java.level>
+        <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
+        <jenkins.baseline>2.462</jenkins.baseline>
+        <jenkins.version>${jenkins.baseline}.3</jenkins.version>
         <workflow.version>1.10</workflow.version>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.jenkins.tools.bom</groupId>
+                <artifactId>bom-${jenkins.baseline}.x</artifactId>
+                <version>4228.v0a_71308d905b_</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>ant</artifactId>
-            <version>1.4</version>
         </dependency>
         
            <!-- workflow stuff -->
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
-            <version>${workflow.version}</version>
             <artifactId>workflow-step-api</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-job</artifactId>
-            <version>${workflow.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -62,13 +71,11 @@
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-step-api</artifactId>
             <classifier>tests</classifier>
-            <version>${workflow.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>script-security</artifactId>
-            <version>1.75</version>
         </dependency>
         
     </dependencies>
@@ -79,13 +86,6 @@
             <url>http://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
-
-    <developers>
-        <developer>
-            <id>phreakadelle</id>
-            <name>Stephan Watermeyer</name>
-        </developer>
-    </developers>
 
     <repositories>
         <repository>
