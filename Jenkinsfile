@@ -1,9 +1,11 @@
-#!groovy
-
-// Don't test plugin compatibility - exceeds 1 hour timeout
-// Allow failing tests to retry execution
-// buildPlugin(failFast: false)
-
-// Test plugin compatbility to latest Jenkins LTS
-// Allow failing tests to retry execution
-buildPlugin(jenkinsVersions: [null, '2.60.1'], failFast: false)
+/*
+ * See the documentation for more options:
+ * https://github.com/jenkins-infra/pipeline-library/
+ */
+buildPlugin(
+  forkCount: '1C', // run this number of tests in parallel for faster feedback.  If the number terminates with a 'C', the value will be multiplied by the number of available CPU cores
+  useContainerAgent: true, // Set to `false` if you need to use Docker for containerized tests
+  configurations: [
+    [platform: 'linux', jdk: 21],
+    [platform: 'windows', jdk: 17],
+])
