@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+   Plugin extends official Ant Plugin. Allows to use an Ant that is located in the Workspace.
+</div>

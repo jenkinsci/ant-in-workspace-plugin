@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 import hudson.AbortException;
 import hudson.Extension;
@@ -143,7 +143,7 @@ public class AntInWorkspace extends Ant {
         }
 
         @Override
-        public boolean configure(StaplerRequest staplerRequest, JSONObject json) throws FormException {
+        public boolean configure(StaplerRequest2 staplerRequest, JSONObject json) throws FormException {
             antWorkspaceFolder = json.getString("antWorkspaceFolder");
             antWorkspaceFolder = appendSeparatorIfNecessary(antWorkspaceFolder);
             save();
