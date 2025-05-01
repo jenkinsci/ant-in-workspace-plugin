@@ -30,7 +30,7 @@
         <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
         <jenkins.baseline>2.479</jenkins.baseline>
         <jenkins.version>${jenkins.baseline}.3</jenkins.version>
-        <workflow.version>1.10</workflow.version>
+        <workflow.version>608.v67378e9d3db_1</workflow.version>
     </properties>
     <dependencyManagement>
         <dependencies>
